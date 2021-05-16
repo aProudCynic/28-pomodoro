@@ -36,11 +36,14 @@ def setup_ui():
     canvas.create_text(100, 130, text="00:00", fill="white", font=(FONT_NAME, 35, "bold"))
     canvas.grid(row=1, column=1)
 
-    start_button = Button(text="Start")
+    start_button = Button(text="Start", highlightthickness=0)
     start_button.grid(row=2, column=0)
 
-    start_button = Button(text="Reset")
+    start_button = Button(text="Reset", highlightthickness=0)
     start_button.grid(row=2, column=2)
+
+    timer_label = Label(text="✔", fg=GREEN, bg=YELLOW)
+    timer_label.grid(row=3, column=1)
 
     window.mainloop()
 
