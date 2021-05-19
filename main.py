@@ -15,9 +15,10 @@ FONT_NAME = "Courier"
 WORK_MIN = 25
 SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
-periods = [WORK_MIN, SHORT_BREAK_MIN] * 3 + [WORK_MIN, LONG_BREAK_MIN]
+periods = [('work', WORK_MIN), ('break', SHORT_BREAK_MIN)] * 3 + [{'work': WORK_MIN}, {'break': LONG_BREAK_MIN}]
 cycle = 0
 remaining_seconds_in_period = None
+timer_label = None
 
 # ---------------------------- TIMER MECHANISM ------------------------------- # 
 
@@ -28,7 +29,8 @@ def setup_ui():
     window = Tk()
     window.title("Pomodoro")
     window.config(padx=100, pady=50, bg=YELLOW)
-    
+
+    global timer_label
     timer_label = Label(text="Timer", fg=GREEN, bg=YELLOW, font=(FONT_NAME, 35, "bold"))
     timer_label.grid(row=0, column=1)
     
@@ -44,8 +46,8 @@ def setup_ui():
     start_button = Button(text="Reset", highlightthickness=0)
     start_button.grid(row=2, column=2)
 
-    timer_label = Label(text="✔", fg=GREEN, bg=YELLOW)
-    timer_label.grid(row=3, column=1)
+    checkmark_label = Label(text="✔", fg=GREEN, bg=YELLOW)
+    checkmark_label.grid(row=3, column=1)
     return window, canvas, timer_text
 
 
@@ -62,9 +64,14 @@ def _at_least_two_digits(number):
 def count_down(window, count, canvas, timer_text):
     global remaining_seconds_in_period
     global cycle
-    if remaining_seconds_in_period == 0:
+    is_initiated = remaining_seconds_in_period is None
+    if remaining_seconds_in_period <= 0:
         cycle += 1
-        remaining_seconds_in_period = periods[cycle] * 60
+
+    if remaining_seconds_in_period == 0 or is_initiated:
+        period = periods[cycle]
+        remaining_seconds_in_period = period[1] * 60
+        timer_label.config(text=period[0])
     if count > 0:
         formatted_time = _format_seconds(count)
         canvas.itemconfig(timer_text, text=formatted_time)
@@ -75,7 +82,7 @@ def start_timer():
     global remaining_seconds_in_period
     global cycle
     if remaining_seconds_in_period is None:
-        remaining_seconds_in_period = periods[cycle] * 60
+        remaining_seconds_in_period = periods[cycle][1] * 60
     count_down(window, remaining_seconds_in_period, canvas, timer_text)
 
 
