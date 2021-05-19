@@ -35,7 +35,7 @@ def setup_ui():
     timer_text = canvas.create_text(100, 130, text="00:00", fill="white", font=(FONT_NAME, 35, "bold"))
     canvas.grid(row=1, column=1)
 
-    start_button = Button(text="Start", highlightthickness=0)
+    start_button = Button(text="Start", highlightthickness=0, command=start_timer)
     start_button.grid(row=2, column=0)
 
     start_button = Button(text="Reset", highlightthickness=0)
@@ -52,6 +52,9 @@ def count_down(window, count, canvas, timer_text):
         window.after(1000, count_down, window, count - 1, canvas, timer_text)
 
 
+def start_timer():
+    count_down(window, 10, canvas, timer_text)
+
+
 window, canvas, timer_text = setup_ui()
-count_down(window, 10, canvas, timer_text)
 window.mainloop()
