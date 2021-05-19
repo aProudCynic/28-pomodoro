@@ -46,14 +46,25 @@ def setup_ui():
     return window, canvas, timer_text
 
 
+def _format_seconds(count):
+    minutes = count // 60
+    seconds = count % 60
+    return f'{_at_least_two_digits(minutes)}:{_at_least_two_digits(seconds)}'
+
+
+def _at_least_two_digits(number):
+    return number if number >= 10 else "0" + str(number)
+
+
 def count_down(window, count, canvas, timer_text):
     if count > 0:
-        canvas.itemconfig(timer_text, text=count)
+        formatted_time = _format_seconds(count)
+        canvas.itemconfig(timer_text, text=formatted_time)
         window.after(1000, count_down, window, count - 1, canvas, timer_text)
 
 
 def start_timer():
-    count_down(window, 10, canvas, timer_text)
+    count_down(window, 25 * 60, canvas, timer_text)
 
 
 window, canvas, timer_text = setup_ui()
