@@ -15,6 +15,9 @@ FONT_NAME = "Courier"
 WORK_MIN = 25
 SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
+periods = [WORK_MIN, SHORT_BREAK_MIN] * 3 + [WORK_MIN, LONG_BREAK_MIN]
+cycle = 0
+remaining_seconds_in_period = None
 
 # ---------------------------- TIMER MECHANISM ------------------------------- # 
 
@@ -57,6 +60,11 @@ def _at_least_two_digits(number):
 
 
 def count_down(window, count, canvas, timer_text):
+    global remaining_seconds_in_period
+    global cycle
+    if remaining_seconds_in_period == 0:
+        cycle += 1
+        remaining_seconds_in_period = periods[cycle] * 60
     if count > 0:
         formatted_time = _format_seconds(count)
         canvas.itemconfig(timer_text, text=formatted_time)
@@ -64,7 +72,11 @@ def count_down(window, count, canvas, timer_text):
 
 
 def start_timer():
-    count_down(window, 25 * 60, canvas, timer_text)
+    global remaining_seconds_in_period
+    global cycle
+    if remaining_seconds_in_period is None:
+        remaining_seconds_in_period = periods[cycle] * 60
+    count_down(window, remaining_seconds_in_period, canvas, timer_text)
 
 
 window, canvas, timer_text = setup_ui()
