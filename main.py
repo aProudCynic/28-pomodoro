@@ -5,6 +5,7 @@ from tkinter import (
     PhotoImage,
     Tk,
 )
+
 # ---------------------------- CONSTANTS ------------------------------- #
 PINK = "#e2979c"
 RED = "#e7305b"
@@ -14,8 +15,6 @@ FONT_NAME = "Courier"
 WORK_MIN = 25
 SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
-
-# ---------------------------- TIMER RESET ------------------------------- # 
 
 # ---------------------------- TIMER MECHANISM ------------------------------- # 
 
@@ -33,7 +32,7 @@ def setup_ui():
     canvas = Canvas(width=200, height=224, bg=YELLOW, highlightthickness=0)
     tomato = PhotoImage(file="tomato.png")
     canvas.create_image(100, 112, image=tomato)
-    canvas.create_text(100, 130, text="00:00", fill="white", font=(FONT_NAME, 35, "bold"))
+    timer_text = canvas.create_text(100, 130, text="00:00", fill="white", font=(FONT_NAME, 35, "bold"))
     canvas.grid(row=1, column=1)
 
     start_button = Button(text="Start", highlightthickness=0)
@@ -44,8 +43,15 @@ def setup_ui():
 
     timer_label = Label(text="✔", fg=GREEN, bg=YELLOW)
     timer_label.grid(row=3, column=1)
+    return window, canvas, timer_text
 
-    window.mainloop()
+
+def count_down(window, count, canvas, timer_text):
+    if count > 0:
+        canvas.itemconfig(timer_text, text=count)
+        window.after(1000, count_down, window, count - 1, canvas, timer_text)
 
 
-setup_ui()
+window, canvas, timer_text = setup_ui()
+count_down(window, 10, canvas, timer_text)
+window.mainloop()
