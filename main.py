@@ -26,7 +26,7 @@ class Period:
 
 
 periods = [
-    Period('work', 1, GREEN),
+    Period('work', WORK_MIN, GREEN),
     Period('break', SHORT_BREAK_MIN, PINK),
 ] * 3 + [
     Period('work', WORK_MIN, GREEN),
@@ -77,29 +77,25 @@ def _at_least_two_digits(number):
     return number if number >= 10 else "0" + str(number)
 
 
-def count_down(window, count, canvas, timer_text):
+def count_down(window, canvas, timer_text):
     global remaining_seconds_in_period
     global cycle
     is_initiated = remaining_seconds_in_period is None
-    if remaining_seconds_in_period <= 0:
+    if not is_initiated and remaining_seconds_in_period <= 0:
         cycle += 1
-
-    if remaining_seconds_in_period == 0 or is_initiated:
+    if is_initiated or remaining_seconds_in_period <= 0:
         period = periods[cycle]
-        remaining_seconds_in_period = period[1] * 60
-        timer_label.config(text=period[0])
-    if count > 0:
-        formatted_time = _format_seconds(count)
+        remaining_seconds_in_period = period.length_in_mins * 60
+        timer_label.config(text=period.name, fg=period.color)
+    if remaining_seconds_in_period > 0:
+        formatted_time = _format_seconds(remaining_seconds_in_period)
         canvas.itemconfig(timer_text, text=formatted_time)
-        window.after(1000, count_down, window, count - 1, canvas, timer_text)
+        remaining_seconds_in_period -= 1
+        window.after(1000, count_down, window, canvas, timer_text)
 
 
 def start_timer():
-    global remaining_seconds_in_period
-    global cycle
-    if remaining_seconds_in_period is None:
-        remaining_seconds_in_period = periods[cycle][1] * 60
-    count_down(window, remaining_seconds_in_period, canvas, timer_text)
+    count_down(window, canvas, timer_text)
 
 
 window, canvas, timer_text = setup_ui()
