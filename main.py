@@ -35,6 +35,7 @@ periods = [
 cycle = 0
 remaining_seconds_in_period = None
 timer_label = None
+checkmark_label = None
 
 # ---------------------------- TIMER MECHANISM ------------------------------- # 
 
@@ -62,7 +63,8 @@ def setup_ui():
     start_button = Button(text="Reset", highlightthickness=0)
     start_button.grid(row=2, column=2)
 
-    checkmark_label = Label(text="✔", fg=GREEN, bg=YELLOW)
+    global checkmark_label
+    checkmark_label = Label(fg=GREEN, bg=YELLOW)
     checkmark_label.grid(row=3, column=1)
     return window, canvas, timer_text
 
@@ -80,11 +82,12 @@ def _at_least_two_digits(number):
 def count_down(window, canvas, timer_text):
     global remaining_seconds_in_period
     global cycle
+    global checkmark_label
     is_initiated = remaining_seconds_in_period is None
     if not is_initiated and remaining_seconds_in_period <= 0:
         cycle += 1
+    period = periods[cycle]
     if is_initiated or remaining_seconds_in_period <= 0:
-        period = periods[cycle]
         remaining_seconds_in_period = period.length_in_mins * 60
         timer_label.config(text=period.name, fg=period.color)
     if remaining_seconds_in_period > 0:
@@ -92,6 +95,9 @@ def count_down(window, canvas, timer_text):
         canvas.itemconfig(timer_text, text=formatted_time)
         remaining_seconds_in_period -= 1
         window.after(1000, count_down, window, canvas, timer_text)
+    elif period.name == 'break':
+        current_text = checkmark_label.cget("text")
+        checkmark_label.config(text=f"{current_text}✔")
 
 
 def start_timer():
