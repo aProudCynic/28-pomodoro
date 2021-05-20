@@ -15,7 +15,23 @@ FONT_NAME = "Courier"
 WORK_MIN = 25
 SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
-periods = [('work', WORK_MIN), ('break', SHORT_BREAK_MIN)] * 3 + [{'work': WORK_MIN}, {'break': LONG_BREAK_MIN}]
+
+
+class Period:
+
+    def __init__(self, name, length_in_mins, color):
+        self.name = name
+        self.length_in_mins = length_in_mins
+        self.color = color
+
+
+periods = [
+    Period('work', 1, GREEN),
+    Period('break', SHORT_BREAK_MIN, PINK),
+] * 3 + [
+    Period('work', WORK_MIN, GREEN),
+    Period('break', LONG_BREAK_MIN, RED),
+]
 cycle = 0
 remaining_seconds_in_period = None
 timer_label = None
