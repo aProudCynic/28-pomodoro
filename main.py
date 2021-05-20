@@ -36,6 +36,8 @@ cycle = 0
 remaining_seconds_in_period = None
 timer_label = None
 checkmark_label = None
+countdown = None
+timer_text = None
 
 # ---------------------------- TIMER MECHANISM ------------------------------- # 
 
@@ -54,13 +56,15 @@ def setup_ui():
     canvas = Canvas(width=200, height=224, bg=YELLOW, highlightthickness=0)
     tomato = PhotoImage(file="tomato.png")
     canvas.create_image(100, 112, image=tomato)
+
+    global timer_text
     timer_text = canvas.create_text(100, 130, text="00:00", fill="white", font=(FONT_NAME, 35, "bold"))
     canvas.grid(row=1, column=1)
 
     start_button = Button(text="Start", highlightthickness=0, command=start_timer)
     start_button.grid(row=2, column=0)
 
-    start_button = Button(text="Reset", highlightthickness=0)
+    start_button = Button(text="Reset", highlightthickness=0, command=reset_timer)
     start_button.grid(row=2, column=2)
 
     global checkmark_label
@@ -83,6 +87,7 @@ def count_down(window, canvas, timer_text):
     global remaining_seconds_in_period
     global cycle
     global checkmark_label
+    global countdown
     is_initiated = remaining_seconds_in_period is None
     if not is_initiated and remaining_seconds_in_period <= 0:
         cycle += 1
@@ -94,7 +99,7 @@ def count_down(window, canvas, timer_text):
         formatted_time = _format_seconds(remaining_seconds_in_period)
         canvas.itemconfig(timer_text, text=formatted_time)
         remaining_seconds_in_period -= 1
-        window.after(1000, count_down, window, canvas, timer_text)
+        countdown = window.after(1000, count_down, window, canvas, timer_text)
     elif period.name == 'break':
         current_text = checkmark_label.cget("text")
         checkmark_label.config(text=f"{current_text}✔")
@@ -102,6 +107,15 @@ def count_down(window, canvas, timer_text):
 
 def start_timer():
     count_down(window, canvas, timer_text)
+
+
+def reset_timer():
+    global checkmark_label
+    global timer_text
+    window.after_cancel(countdown)
+    timer_label.config(text="timer")
+    timer_text.config(text="00:00")
+    checkmark_label = ""
 
 
 window, canvas, timer_text = setup_ui()
