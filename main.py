@@ -112,9 +112,10 @@ def start_timer():
 def reset_timer():
     global checkmark_label
     global timer_text
+    global canvas
     window.after_cancel(countdown)
     timer_label.config(text="timer")
-    timer_text.config(text="00:00")
+    canvas.itemconfig(timer_text, text="00:00")
     checkmark_label = ""
 
 
